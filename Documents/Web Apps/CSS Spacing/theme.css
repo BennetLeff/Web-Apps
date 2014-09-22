@@ -1,0 +1,21 @@
+table {
+	width: 100%
+	font-family: Tahoma;
+	font-size: 13px;
+	border-spacing: 0px 1px;
+}
+
+.entries {
+	padding-bottom: 1em;
+}
+
+.entries:nth-child(odd) {
+    background: #eeeff2;
+}
+
+.entries:nth-child(even) {
+    background: #dfe1e7;
+}
+.top {
+	background-color: #687291;
+}
