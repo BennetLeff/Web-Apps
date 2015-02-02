@@ -7,6 +7,7 @@ import os
 import time
 import datetime
 import urllib2
+import json
 from xml.dom import minidom
 from hashes import *
 from google.appengine.ext import db
@@ -67,6 +68,11 @@ class BlogHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def render_json(self, d):
+        json_txt = json.dumps(d)
+        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
+        self.write(json_txt)
+
 
 class Blog(db.Model):
     # DEFINE YOUR DATABASE PROPERTIES HERE
@@ -74,6 +80,14 @@ class Blog(db.Model):
     content = db.TextProperty()
     created = db.DateTimeProperty(auto_now=True)
     coords = db.GeoPtProperty()
+
+    # function that prints a BLOG entry as a dictionary
+    def as_dict(self):
+        time_fmt = '%c'
+        d = {'subject': self.subject,
+             'content': self.content,
+             'created': self.created.strftime(time_fmt)}
+        return d
 
 
 class BlogFront(BlogHandler):
@@ -83,13 +97,13 @@ class BlogFront(BlogHandler):
         posts = db.GqlQuery("SELECT * FROM Blog ORDER BY created DESC limit 10")
         currentuser = self.request.cookies.get('currentuser', "")
         user = db.GqlQuery("SELECT * FROM User WHERE password=:1", currentuser)
-
-        # logging.info(self.request.remote_addr)
-
-        if currentuser:
-            self.render("posts.html", posts=posts, username=form['username']['value'])
+        if not self.request.url.endswith('.json'):
+            if currentuser:
+                self.render("posts.html", posts=posts, username=form['username']['value'])
+            else:
+                self.redirect('/')
         else:
-            self.redirect('/')
+            self.render_json([post.as_dict() for post in posts])
 
 
 class Permalink(BlogHandler):
@@ -285,9 +299,8 @@ app = webapp2.WSGIApplication([
     (r'/blog/login.{0,1}', LogIn),
     (r'/blog/logout.{0,1}', LogOut),
     (r'/blog/signup.{0,1}', SignUp),
-    (r'/blog.{0,1}', BlogFront),
+    (r'/blog/?(?:\.json)?', BlogFront),
     (r'/blog/newpost.{0,1}', NewPost),
-    (r'/blog/permalink/(\d+)', Permalink),
+    (r'/blog/permalink/(\d+)(?:\.json)?', Permalink),
     (r'/blog/map', Map),
-    # (r'/blog/map.{0,1})', Map),
 ], debug=True)
