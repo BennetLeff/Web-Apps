@@ -16,18 +16,19 @@ ranging in difficulty.
 4. Validation App
   - Input Validation
   - Escaping Form Input
-5. Blog App (1)
+5. Ascii Art
+  - Databases using Gql [A SQL like Database]
+6. Blog App (1)
   - Routing
-  - Gql [A SQL like Database]
   - Templates
-6. Cookies
+7. Cookies
   - Cookies
-7. Blog App (2)
+8. Blog App (2)
   - Implement cookies & passwords on the Blog App
   - Hashes
-8. Blog App (3)
+9. Blog App (3)
   - Logout/Cookie Expiration
   - Exchanging Data i.e. HTTP, XML/RSS & JSON
   - API's
-9. Resistors [Midterm]
+10. Resistors [Midterm]
   - Part of my Midterm for Web Applications
